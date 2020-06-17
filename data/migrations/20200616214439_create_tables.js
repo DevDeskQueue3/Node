@@ -8,7 +8,7 @@ exports.up = function (knex) {
     })
     .createTable("roles", (tbl) => {
       tbl
-        .string("userID")
+        .integer("userID")
         .unsigned()
         .notNullable()
         .references("users.id")
@@ -42,7 +42,7 @@ exports.up = function (knex) {
     })
     .createTable("categories", (tbl) => {
       tbl
-        .string("ticketID")
+        .integer("ticketID")
         .unsigned()
         .notNullable()
         .references("tickets.id")
@@ -62,7 +62,7 @@ exports.up = function (knex) {
         .onDelete("CASCADE");
       tbl.integer("postedAt").notNullable();
       tbl
-        .string("ticketID")
+        .integer("ticketID")
         .unsigned()
         .notNullable()
         .references("tickets.id")
