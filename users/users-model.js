@@ -1,29 +1,35 @@
-const db = require('../dbConfig.js');
+const db = require("../dbConfig.js");
+const usersChecks = require("./users-checks.js");
 
 module.exports = {
-	add,
-	find,
-	findBy,
-	findById,
+  add,
+  find,
+  findBy,
+  findById,
 };
 
 function find() {
-	return db('users').select('*').orderBy('id');
+  return db("users").select("*").orderBy("id");
 }
 
 function findBy(filter) {
-	return db('users').where(filter).orderBy('id');
+  return db("users").where(filter).orderBy("id");
 }
 
 async function add(user) {
-	try {
-		const [id] = await db('users').insert(user, 'id');
-		return findById(id);
-	} catch (error) {
-		throw error;
-	}
+  const { name, email, password, role } = user;
+  const [id] = await db("users").insert({ name, email, password }, "id");
+  await db("roles").insert({ userID: id, role });
+  return findById(id);
 }
 
-function findById(id) {
-	return db('users').where({ id }).first();
+async function findById(id) {
+  const user = await db("users")
+    .where({ id })
+    .select("id", "name", "email")
+    .first();
+  const roles = await db("roles").where({ userID: id }).select("role");
+  user.roles = roles.map(({ role }) => role);
+
+  return user;
 }
