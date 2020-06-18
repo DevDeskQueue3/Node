@@ -1,41 +1,44 @@
 module.exports = {
   development: {
-    client: "sqlite3",
+    client: "pg",
     connection: {
-      filename: "./data/devdesk.db3",
+      host: "localhost",
+      database: "devdesk",
+      user: process.env.PG_USERNAME,
+      password: process.env.PG_PASSWORD,
     },
-    useNullAsDefault: true,
     migrations: {
       directory: "./data/migrations",
+      tableName: "knex_migrations",
     },
     seeds: {
       directory: "./data/seeds",
     },
-    pool: {
-      afterCreate: (conn, cb) => conn.run("PRAGMA foreign_keys = ON", cb),
-    },
   },
+
   testing: {
-    client: "sqlite3",
+    client: "pg",
     connection: {
-      filename: "./data/test.db3",
+      host: "localhost",
+      database: "devdesk-test",
+      user: process.env.PG_USERNAME,
+      password: process.env.PG_PASSWORD,
     },
-    useNullAsDefault: true,
     migrations: {
       directory: "./data/migrations",
+      tableName: "knex_migrations",
     },
     seeds: {
       directory: "./data/seeds",
     },
-    pool: {
-      afterCreate: (conn, cb) => conn.run("PRAGMA foreign_keys = ON", cb),
-    },
   },
+
   production: {
     client: "pg",
     connection: process.env.DATABASE_URL,
     migrations: {
       directory: "./data/migrations",
+      tableName: "knex_migrations",
     },
     seeds: {
       directory: "./data/seeds",
