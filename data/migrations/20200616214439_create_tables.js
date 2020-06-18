@@ -26,7 +26,7 @@ exports.up = function (knex) {
         .references("users.id")
         .onUpdate("CASCADE")
         .onDelete("CASCADE");
-      tbl.timestamp("postedAt").notNullable();
+      tbl.timestamp("postedAt").defaultTo(knex.fn.now());
       tbl
         .integer("claimedBy")
         .unsigned()
@@ -60,7 +60,7 @@ exports.up = function (knex) {
         .references("users.id")
         .onUpdate("CASCADE")
         .onDelete("CASCADE");
-      tbl.timestamp("postedAt").notNullable();
+      tbl.timestamp("postedAt").defaultTo(knex.fn.now());
       tbl
         .integer("ticketID")
         .unsigned()
