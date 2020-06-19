@@ -4,14 +4,21 @@ const Users = require("../users/users-model");
 // Return list of all tickets
 async function find() {
   const tickets = await db("tickets");
-  await Promise.all(
-    tickets.map((ticket, i) => {
+  await Promise.all([
+    ...tickets.map((ticket, i) => {
       const userID = ticket.postedBy;
       return Users.getNameByID(userID).then(
         ({ name }) => (tickets[i].postedBy = { userID, name })
       );
-    })
-  );
+    }),
+    ...tickets.map((ticket, i) => {
+      if (!ticket.claimedBy) return;
+      const userID = ticket.claimedBy;
+      return Users.getNameByID(userID).then(
+        ({ name }) => (tickets[i].claimedBy = { userID, name })
+      );
+    }),
+  ]);
   return tickets;
 }
 
