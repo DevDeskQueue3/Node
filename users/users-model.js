@@ -1,44 +1,44 @@
-const db = require('../dbConfig.js');
+const db = require("../dbConfig.js");
 
 module.exports = {
-	add,
-	find,
-	findBy,
-	findOneBy,
-	findById,
+  add,
+  find,
+  findBy,
+  findOneBy,
+  findById,
 };
 
 function find() {
-	return db('users').select('*').orderBy('id');
+  return db("users").select("*").orderBy("id");
 }
 
 function findBy(filter) {
-	return db('users').where(filter).orderBy('id');
+  return db("users").where(filter).orderBy("id");
 }
 
 async function findOneBy(filter) {
-	const user = await db('users').where(filter).first();
-	if (!user) return;
-	const roles = await db('roles').where({ userID: user.id }).select('role');
-	user.roles = roles.map(({ role }) => role);
+  const user = await db("users").where(filter).first();
+  if (!user) return;
+  const roles = await db("roles").where({ userID: user.id }).select("role");
+  user.roles = roles.map(({ role }) => role);
 
-	return user;
+  return user;
 }
 
 async function add(user) {
-	const { name, email, password, role } = user;
-	const [id] = await db('users').insert({ name, email, password }, 'id');
-	await db('roles').insert({ userID: id, role });
-	return findById(id);
+  const { name, email, password, role } = user;
+  const [id] = await db("users").insert({ name, email, password }, "id");
+  await db("roles").insert({ userID: id, role });
+  return findById(id);
 }
 
 async function findById(id) {
-	const user = await db('users')
-		.where({ id })
-		.select('id', 'name', 'email')
-		.first();
-	const roles = await db('roles').where({ userID: id }).select('role');
-	user.roles = roles.map(({ role }) => role);
+  const user = await db("users")
+    .where({ id })
+    .select("id", "name", "email")
+    .first();
+  const roles = await db("roles").where({ userID: id }).select("role");
+  user.roles = roles.map(({ role }) => role);
 
-	return user;
+  return user;
 }

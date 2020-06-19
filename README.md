@@ -1,19 +1,19 @@
-# Node
+# DevDesk Node Backend
 
-# EndPoints
+## Schema
 
-## AUTH
+[![DevDesk Schema](./devdesk-schema.png)](https://dbdesigner.page.link/HWd9oM44iNGwjuH88)
+[View on DB Designer](https://dbdesigner.page.link/HWd9oM44iNGwjuH88)
 
-### POST /api/auth/register
+## API Endpoints
 
-In order to register, a user needs to provide **name**, **email address**, **role** (that includes Admin, Student, Helper) and **password**.
+Deployed to Heroku: https://devdeskqueue3-pt.herokuapp.com/
 
-If any of the required data is missing, it returns HTTP 400 (Bad Request) error.
+All endpoints receive and return JSON
 
-### POST /api/auth/login
+### Auth
 
-In order to register, a user needs to provide valid email and password.
-
-If any of the required data is missing, it returns HTTP 400 (Bad Request) error.
-
-If user is not found in the database, it should return HTTP 404 (Not Found) error.
+| Method | URL                | Description                         | Receives                            | Returns                                   |
+| ------ | ------------------ | ----------------------------------- | ----------------------------------- | ----------------------------------------- |
+| POST   | /api/auth/login    | Login endpoint for registered users | `email`, `password`                 | `id`, `name`, `email`, [`roles`], `token` |
+| POST   | /api/auth/register | Register endpoint for new users     | `name`, `email`, `password`, `role` | `id`, `name`, `email`, [`roles`], `token` |
