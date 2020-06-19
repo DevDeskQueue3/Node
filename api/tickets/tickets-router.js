@@ -1,9 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const Tickets = require("./ticket-model.js");
-const restricted = require("../auth/restricted-middleware.js");
 
-router.get("/", restricted, async (req, res) => {
+router.get("/", async (req, res) => {
   try {
     const tickets = await Tickets.find();
     res.status(200).json({ tickets });
