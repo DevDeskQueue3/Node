@@ -31,5 +31,8 @@ exports.seed = function (knex) {
           password: hash,
         },
       ]);
+    })
+    .then(function () {
+      return knex.schema.raw("ALTER SEQUENCE users_id_seq RESTART WITH 5");
     });
 };
