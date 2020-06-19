@@ -5,7 +5,7 @@
 [View on DB Designer](https://dbdesigner.page.link/HWd9oM44iNGwjuH88)
 
 ## API Endpoints
-API deployed to Heroku: https://devdeskqueue3-pt.herokuapp.com/
+Deployed to Heroku: https://devdeskqueue3-pt.herokuapp.com/
 
 All endpoints receive and return JSON
 
