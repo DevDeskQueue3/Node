@@ -6,7 +6,6 @@ exports.seed = function (knex, Promise) {
         {
           id: 1,
           postedBy: 1,
-          claimedBy: 1,
           status: "OPEN",
           title: "Ticket 1",
           description: "Ticket 1 description text ",
