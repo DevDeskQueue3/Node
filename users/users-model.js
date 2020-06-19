@@ -1,5 +1,4 @@
 const db = require("../dbConfig.js");
-const usersChecks = require("./users-checks.js");
 
 module.exports = {
   add,
