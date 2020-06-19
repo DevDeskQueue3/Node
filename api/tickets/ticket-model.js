@@ -1,8 +1,18 @@
 const db = require("../../dbConfig.js");
+const Users = require("../users/users-model");
 
 // Return list of all tickets
-function find() {
-  return db("tickets");
+async function find() {
+  const tickets = await db("tickets");
+  await Promise.all(
+    tickets.map((ticket, i) => {
+      const userID = ticket.postedBy;
+      return Users.getNameByID(userID).then(
+        ({ name }) => (tickets[i].postedBy = { userID, name })
+      );
+    })
+  );
+  return tickets;
 }
 
 // Add new ticket to database
