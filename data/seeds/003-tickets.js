@@ -35,5 +35,8 @@ exports.seed = function (knex, Promise) {
           description: "Ticket 4 description text ",
         },
       ]);
+    })
+    .then(function () {
+      return knex.schema.raw("ALTER SEQUENCE tickets_id_seq RESTART WITH 5");
     });
 };
