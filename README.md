@@ -88,10 +88,10 @@ ___
 ```json
 [
     {
+        "ticket_id": 1,
         "posted_by_id": 1,
         "posted_by_name": "testuser1",
-        "ticket_id": 1,
-        "posted_at": "2020-06-20T16:47:24.535Z",
+        "posted_at": "2020-06-20T17:59:42.464Z",
         "status": "OPEN",
         "title": "Ticket 1",
         "description": "Ticket 1 description text ",
