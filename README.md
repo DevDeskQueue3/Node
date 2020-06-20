@@ -75,6 +75,6 @@ ___
 
 | Method | URL              | Description                                                     |
 | ------ | ---------------- | --------------------------------------------------------------- |
-| GET    | /api/tickets     | Returns an array of the logged in user's tickets                |
+| GET    | /api/tickets     | Returns an array of tickets                                     |
 | POST   | /api/tickets     | Creates a new ticket for the logged in user. Returns the ticket |
 | DELETE | /api/tickets/:id | Deletes a ticket by ID                                          |
