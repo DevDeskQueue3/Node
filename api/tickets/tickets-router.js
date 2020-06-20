@@ -11,13 +11,21 @@ router.get("/", async (req, res) => {
   }
 });
 
-router.post("/", async (req, res) => {
-  const newTicket = req.body;
+router.post("/", async (req, res, next) => {
+  const { id } = req.jwt;
+  const { title, description } = req.body;
+  if (!(title && description))
+    return next({
+      code: 400,
+      message: "Please provide a title and description",
+    });
+
   try {
-    const tickets = await Tickets.add(newTicket);
-    res.status(201).json(tickets);
-  } catch (error) {
-    res.status(500).json({ error });
+    const ticket = await Tickets.add({ title, description, postedBy: id });
+    res.status(201).json(ticket);
+  } catch (err) {
+    console.error(err);
+    next({ code: 500, message: "There was a problem creating the ticket" });
   }
 });
 
