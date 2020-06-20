@@ -21,7 +21,7 @@ router.post("/", async (req, res, next) => {
     });
 
   try {
-    const ticket = await Tickets.add({ title, description, postedBy: id });
+    const [ticket] = await Tickets.add({ title, description, postedBy: id });
     res.status(201).json(ticket);
   } catch (err) {
     console.error(err);
@@ -29,13 +29,15 @@ router.post("/", async (req, res, next) => {
   }
 });
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", async (req, res, next) => {
   const ticketId = req.params.id;
   try {
-    const tickets = await Tickets.remove(ticketId);
-    res.status(201).json(tickets);
-  } catch (error) {
-    res.status(500).json({ error });
+    const count = await Tickets.remove(ticketId);
+    if (!count) return next({ code: 404, message: "Ticket not found" });
+    res.status(200).json(count);
+  } catch (err) {
+    console.error(err);
+    next({ code: 500, message: "There was a problem deleting the ticket" });
   }
 });
 

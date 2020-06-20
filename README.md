@@ -78,3 +78,27 @@ ___
 | GET    | /api/tickets     | Returns an array of tickets                                     |
 | POST   | /api/tickets     | Creates a new ticket for the logged in user. Returns the ticket |
 | DELETE | /api/tickets/:id | Deletes a ticket by ID                                          |
+
+___
+`POST /api/tickets`
+
+**Receives**
+```json
+{
+    "title": "new ticket!",
+    "description": "here's the description"
+}
+```
+
+
+**Returns**
+```json
+{
+    "id": 8,
+    "postedAt": "2020-06-20T02:14:32.834Z",
+    "status": "OPEN",
+    "title": "new ticket!",
+    "description": "here's the description"
+}
+```
+___

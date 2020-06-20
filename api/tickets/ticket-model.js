@@ -24,7 +24,9 @@ async function find() {
 
 // Add new ticket to database
 function add(ticket) {
-  return db("tickets").insert(ticket).returning("*");
+  return db("tickets")
+    .insert(ticket)
+    .returning(["id", "postedAt", "status", "title", "description"]);
 }
 
 // Removes ticket selected by id
