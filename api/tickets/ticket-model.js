@@ -1,9 +1,13 @@
 const db = require("../../dbConfig.js");
 const Users = require("../users/users-model");
 
-// Return list of all tickets
-async function find() {
-  const tickets = await db("tickets");
+// Return an array of all tickets,
+// or a selection of ticket with an optional filter
+async function find(filter) {
+  const tickets = filter
+    ? await db("tickets").where(filter)
+    : await db("tickets");
+
   await Promise.all([
     ...tickets.map((ticket, i) => {
       const userID = ticket.postedBy;
@@ -19,6 +23,7 @@ async function find() {
       );
     }),
   ]);
+
   return tickets;
 }
 
@@ -29,14 +34,17 @@ function add(ticket) {
     .returning(["id", "postedAt", "status", "title", "description"]);
 }
 
-// Removes ticket selected by id
-function remove(id) {
-  return db("tickets").where({ id }).delete();
+// Removes ticket selected by id posted by user with `userID`
+function remove(ticketID, userID) {
+  return db("tickets").where({ id: ticketID, postedBy: userID }).delete();
 }
 
 // Updates ticket by id
-function update(ticket, id) {
-  return db("tickets").where({ id }).update(ticket);
+function update(ticket, ticketID, userID) {
+  return db("tickets")
+    .where({ id: ticketID, postedBy: userID })
+    .update(ticket)
+    .returning(["id", "postedAt", "status", "title", "description"]);
 }
 
 module.exports = {

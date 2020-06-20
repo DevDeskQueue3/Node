@@ -12,7 +12,7 @@ router.get("/", async (req, res) => {
 });
 
 router.post("/", async (req, res, next) => {
-  const { id } = req.jwt;
+  const userID = req.jwt.id;
   const { title, description } = req.body;
   if (!(title && description))
     return next({
@@ -21,7 +21,11 @@ router.post("/", async (req, res, next) => {
     });
 
   try {
-    const [ticket] = await Tickets.add({ title, description, postedBy: id });
+    const [ticket] = await Tickets.add({
+      postedBy: userID,
+      title,
+      description,
+    });
     res.status(201).json(ticket);
   } catch (err) {
     console.error(err);
@@ -29,10 +33,37 @@ router.post("/", async (req, res, next) => {
   }
 });
 
+router.put("/:id", async (req, res, next) => {
+  const userID = req.jwt.id;
+  const ticketID = req.params.id;
+  const { title, description } = req.body;
+  if (!(title && description))
+    return next({
+      code: 400,
+      message: "Please provide a title and description",
+    });
+
+  try {
+    const [ticket] = await Tickets.update(
+      {
+        title,
+        description,
+      },
+      ticketID,
+      userID
+    );
+    res.status(201).json(ticket);
+  } catch (err) {
+    console.error(err);
+    next({ code: 500, message: "There was a problem updating the ticket" });
+  }
+});
+
 router.delete("/:id", async (req, res, next) => {
   const ticketId = req.params.id;
+  const userID = req.jwt.id;
   try {
-    const count = await Tickets.remove(ticketId);
+    const count = await Tickets.remove(ticketId, userID);
     if (!count) return next({ code: 404, message: "Ticket not found" });
     res.status(200).json(count);
   } catch (err) {
