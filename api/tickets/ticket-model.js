@@ -1,5 +1,4 @@
 const db = require("../../dbConfig.js");
-const Users = require("../users/users-model");
 
 // Returns an array of all tickets with user names and ids
 async function find(filter) {
