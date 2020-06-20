@@ -37,6 +37,7 @@ router.put("/:id", async (req, res, next) => {
   const userID = req.jwt.id;
   const ticketID = req.params.id;
   const { title, description } = req.body;
+
   if (!(title && description))
     return next({
       code: 400,
@@ -44,14 +45,9 @@ router.put("/:id", async (req, res, next) => {
     });
 
   try {
-    const [ticket] = await Tickets.update(
-      {
-        title,
-        description,
-      },
-      ticketID,
-      userID
-    );
+    const changes = { title, description };
+    const [ticket] = await Tickets.update(changes, ticketID, userID);
+    // TODO: handle attempting to update another user's ticket
     res.status(201).json(ticket);
   } catch (err) {
     console.error(err);
