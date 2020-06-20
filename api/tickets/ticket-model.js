@@ -1,30 +1,21 @@
 const db = require("../../dbConfig.js");
 const Users = require("../users/users-model");
 
-// Return an array of all tickets,
-// or a selection of ticket with an optional filter
+// Returns an array of all tickets with user names and ids
 async function find(filter) {
-  const tickets = filter
-    ? await db("tickets").where(filter)
-    : await db("tickets");
-
-  await Promise.all([
-    ...tickets.map((ticket, i) => {
-      const userID = ticket.postedBy;
-      return Users.getNameByID(userID).then(
-        ({ name }) => (tickets[i].postedBy = { userID, name })
-      );
-    }),
-    ...tickets.map((ticket, i) => {
-      if (!ticket.claimedBy) return;
-      const userID = ticket.claimedBy;
-      return Users.getNameByID(userID).then(
-        ({ name }) => (tickets[i].claimedBy = { userID, name })
-      );
-    }),
-  ]);
-
-  return tickets;
+  return db("tickets as t")
+    .join("users as p", "p.id", "t.posted_by")
+    .leftJoin("users as c", "c.id", "t.claimed_by")
+    .select(
+      "p.id as posted_by_id",
+      "p.name as posted_by_name",
+      "t.id as ticket_id",
+      "t.posted_at",
+      "t.title",
+      "t.description",
+      "c.id as claimed_by_id",
+      "c.name as claimed_by_name"
+    );
 }
 
 // Add new ticket to database
