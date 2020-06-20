@@ -31,20 +31,20 @@ async function find(filter) {
 function add(ticket) {
   return db("tickets")
     .insert(ticket)
-    .returning(["id", "postedAt", "status", "title", "description"]);
+    .returning(["id", "posted_at", "status", "title", "description"]);
 }
 
 // Removes ticket selected by id posted by user with `userID`
 function remove(ticketID, userID) {
-  return db("tickets").where({ id: ticketID, postedBy: userID }).delete();
+  return db("tickets").where({ id: ticketID, posted_by: userID }).delete();
 }
 
 // Updates ticket by id
 function update(ticket, ticketID, userID) {
   return db("tickets")
-    .where({ id: ticketID, postedBy: userID })
+    .where({ id: ticketID, posted_by: userID })
     .update(ticket)
-    .returning(["id", "postedAt", "status", "title", "description"]);
+    .returning(["id", "posted_at", "status", "title", "description"]);
 }
 
 module.exports = {
