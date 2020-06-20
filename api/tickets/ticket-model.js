@@ -6,15 +6,17 @@ async function find(filter) {
     .join("users as p", "p.id", "t.posted_by")
     .leftJoin("users as c", "c.id", "t.claimed_by")
     .select(
+      "t.id as ticket_id",
       "p.id as posted_by_id",
       "p.name as posted_by_name",
-      "t.id as ticket_id",
       "t.posted_at",
+      "t.status",
       "t.title",
       "t.description",
       "c.id as claimed_by_id",
       "c.name as claimed_by_name"
-    );
+    )
+    .orderBy("posted_at");
 }
 
 // Add new ticket to database

@@ -92,6 +92,7 @@ ___
         "posted_by_name": "testuser1",
         "ticket_id": 1,
         "posted_at": "2020-06-20T16:47:24.535Z",
+        "status": "OPEN",
         "title": "Ticket 1",
         "description": "Ticket 1 description text ",
         "claimed_by_id": null,
