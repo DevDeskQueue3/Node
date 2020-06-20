@@ -1,4 +1,4 @@
-const db = require("../dbConfig.js");
+const db = require("../../dbConfig.js");
 
 module.exports = {
   add,
@@ -6,6 +6,7 @@ module.exports = {
   findBy,
   findOneBy,
   findById,
+  getNameByID,
 };
 
 function find() {
@@ -41,4 +42,8 @@ async function findById(id) {
   user.roles = roles.map(({ role }) => role);
 
   return user;
+}
+
+function getNameByID(id) {
+  return db("users").where({ id }).select("name").first();
 }
