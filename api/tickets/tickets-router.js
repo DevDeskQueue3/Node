@@ -5,7 +5,7 @@ const Tickets = require("./ticket-model.js");
 router.get("/", async (req, res) => {
   try {
     const tickets = await Tickets.find();
-    res.status(200).json({ tickets });
+    res.status(200).json(tickets);
   } catch (error) {
     res.status(500).json({ error });
   }
@@ -22,7 +22,7 @@ router.post("/", async (req, res, next) => {
 
   try {
     const [ticket] = await Tickets.add({
-      postedBy: userID,
+      posted_by: userID,
       title,
       description,
     });
@@ -56,10 +56,10 @@ router.put("/:id", async (req, res, next) => {
 });
 
 router.delete("/:id", async (req, res, next) => {
-  const ticketId = req.params.id;
+  const ticketID = req.params.id;
   const userID = req.jwt.id;
   try {
-    const count = await Tickets.remove(ticketId, userID);
+    const count = await Tickets.remove(ticketID, userID);
     if (!count) return next({ code: 404, message: "Ticket not found" });
     res.status(200).json(count);
   } catch (err) {

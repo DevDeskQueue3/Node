@@ -4,19 +4,19 @@ exports.seed = function (knex) {
     .then(function () {
       return knex("roles").insert([
         {
-          userID: 1,
+          user_id: 1,
           role: "STUDENT",
         },
         {
-          userID: 2,
+          user_id: 2,
           role: "STUDENT",
         },
         {
-          userID: 3,
+          user_id: 3,
           role: "STUDENT",
         },
         {
-          userID: 4,
+          user_id: 4,
           role: "STUDENT",
         },
       ]);

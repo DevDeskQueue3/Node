@@ -8,27 +8,27 @@ exports.up = function (knex) {
     })
     .createTable("roles", (tbl) => {
       tbl
-        .integer("userID")
+        .integer("user_id")
         .unsigned()
         .notNullable()
         .references("users.id")
         .onUpdate("CASCADE")
         .onDelete("CASCADE");
       tbl.enu("role", ["ADMIN", "STUDENT", "HELPER"]).notNullable();
-      tbl.primary(["userID", "role"]);
+      tbl.primary(["user_id", "role"]);
     })
     .createTable("tickets", (tbl) => {
       tbl.increments("id");
       tbl
-        .integer("postedBy")
+        .integer("posted_by")
         .unsigned()
         .notNullable()
         .references("users.id")
         .onUpdate("CASCADE")
         .onDelete("CASCADE");
-      tbl.timestamp("postedAt").defaultTo(knex.fn.now());
+      tbl.timestamp("posted_at").defaultTo(knex.fn.now());
       tbl
-        .integer("claimedBy")
+        .integer("claimed_by")
         .unsigned()
         .references("users.id")
         .onUpdate("CASCADE")
@@ -42,34 +42,33 @@ exports.up = function (knex) {
     })
     .createTable("categories", (tbl) => {
       tbl
-        .integer("ticketID")
+        .integer("ticket_id")
         .unsigned()
         .notNullable()
         .references("tickets.id")
         .onUpdate("CASCADE")
         .onDelete("CASCADE");
       tbl.string("category").notNullable();
-      tbl.primary(["ticketID", "category"]);
+      tbl.primary(["ticket_id", "category"]);
     })
     .createTable("comments", (tbl) => {
       tbl.increments("id");
       tbl
-        .integer("postedBy")
+        .integer("posted_by")
         .unsigned()
         .notNullable()
         .references("users.id")
         .onUpdate("CASCADE")
         .onDelete("CASCADE");
-      tbl.timestamp("postedAt").defaultTo(knex.fn.now());
+      tbl.timestamp("posted_at").defaultTo(knex.fn.now());
       tbl
-        .integer("ticketID")
+        .integer("ticket_id")
         .unsigned()
         .notNullable()
         .references("tickets.id")
         .onUpdate("CASCADE")
         .onDelete("CASCADE");
       tbl.text("content").notNullable();
-      tbl.boolean("isSolution").notNullable().defaultTo(false);
     });
 };
 
