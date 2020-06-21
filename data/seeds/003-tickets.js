@@ -30,7 +30,7 @@ exports.seed = function (knex, Promise) {
           id: 4,
           posted_by: 1,
           claimed_by: 2,
-          status: "OPEN",
+          status: "CLOSED",
           title: "Ticket 4",
           description: "Ticket 4 description text ",
         },

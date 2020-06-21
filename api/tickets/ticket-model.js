@@ -19,7 +19,26 @@ async function find(filter) {
     .orderBy("posted_at");
 }
 
-// Returns ticket with specified ID
+// Returns an array of all tickets filtered by ticket status
+
+async function findBy(filter) {
+  return db("tickets as t")
+    .join("users as p", "p.id", "t.posted_by")
+    .leftJoin("users as c", "c.id", "t.claimed_by")
+    .select(
+      "t.id as ticket_id",
+      "p.id as posted_by_id",
+      "p.name as posted_by_name",
+      "t.posted_at",
+      "t.status",
+      "t.title",
+      "t.description",
+      "c.id as claimed_by_id",
+      "c.name as claimed_by_name"
+    )
+    .orderBy("posted_at")
+    .where({ "t.status": filter });
+}
 
 async function findById(ticketID) {
   return db("tickets as t")
@@ -73,6 +92,7 @@ function update(ticket, ticketID, userID) {
 
 module.exports = {
   find,
+  findBy,
   findById,
   add,
   remove,

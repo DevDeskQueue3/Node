@@ -3,11 +3,20 @@ const router = express.Router();
 const Tickets = require("./ticket-model.js");
 
 router.get("/", async (req, res) => {
-  try {
-    const tickets = await Tickets.find();
-    res.status(200).json(tickets);
-  } catch (error) {
-    res.status(500).json({ error });
+  if (req.query.status) {
+    try {
+      const tickets = await Tickets.findBy(req.query.status);
+      res.status(200).json(tickets);
+    } catch (error) {
+      res.status(500).json({ error });
+    }
+  } else {
+    try {
+      const tickets = await Tickets.find();
+      res.status(200).json(tickets);
+    } catch (error) {
+      res.status(500).json({ error });
+    }
   }
 });
 
