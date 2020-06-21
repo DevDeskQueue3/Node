@@ -68,4 +68,15 @@ router.delete("/:id", async (req, res, next) => {
   }
 });
 
+router.get("/:id", async (req, res) => {
+  const ticketID = req.params.id;
+
+  try {
+    const tickets = await Tickets.findById(ticketID);
+    res.status(200).json(tickets);
+  } catch (error) {
+    res.status(500).json({ error });
+  }
+});
+
 module.exports = router;
