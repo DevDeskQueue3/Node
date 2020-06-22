@@ -3,17 +3,24 @@ const router = express.Router();
 const Tickets = require("./ticket-model.js");
 
 router.get("/", async (req, res) => {
+  const loggedInUser = req.jwt.id;
+
   if (req.query.status) {
     try {
       const tickets = await Tickets.findBy(req.query.status);
-      res.status(200).json(tickets);
+      res
+        .status(200)
+        .json(tickets.filter((ticket) => ticket.posted_by_id === loggedInUser));
     } catch (error) {
       res.status(500).json({ error });
     }
   } else {
     try {
       const tickets = await Tickets.find();
-      res.status(200).json(tickets);
+
+      res
+        .status(200)
+        .json(tickets.filter((ticket) => ticket.posted_by_id === loggedInUser));
     } catch (error) {
       res.status(500).json({ error });
     }
