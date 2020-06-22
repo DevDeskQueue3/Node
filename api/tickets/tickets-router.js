@@ -3,11 +3,27 @@ const router = express.Router();
 const Tickets = require("./ticket-model.js");
 
 router.get("/", async (req, res) => {
-  try {
-    const tickets = await Tickets.find();
-    res.status(200).json(tickets);
-  } catch (error) {
-    res.status(500).json({ error });
+  const loggedInUser = req.jwt.id;
+
+  if (req.query.status) {
+    try {
+      const tickets = await Tickets.findBy(req.query.status);
+      res
+        .status(200)
+        .json(tickets.filter((ticket) => ticket.posted_by_id === loggedInUser));
+    } catch (error) {
+      res.status(500).json({ error });
+    }
+  } else {
+    try {
+      const tickets = await Tickets.find();
+
+      res
+        .status(200)
+        .json(tickets.filter((ticket) => ticket.posted_by_id === loggedInUser));
+    } catch (error) {
+      res.status(500).json({ error });
+    }
   }
 });
 
@@ -65,6 +81,28 @@ router.delete("/:id", async (req, res, next) => {
   } catch (err) {
     console.error(err);
     next({ code: 500, message: "There was a problem deleting the ticket" });
+  }
+});
+
+router.get("/:id", async (req, res) => {
+  const ticketID = req.params.id;
+
+  try {
+    const tickets = await Tickets.findById(ticketID);
+    res.status(200).json(tickets);
+  } catch (error) {
+    res.status(500).json({ error });
+  }
+});
+
+router.get("/:id/comments", async (req, res) => {
+  const ticketID = req.params.id;
+
+  try {
+    const tickets = await Tickets.findByIdWithComments(ticketID);
+    res.status(200).json(tickets);
+  } catch (error) {
+    res.status(500).json({ error });
   }
 });
 
