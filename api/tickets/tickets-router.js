@@ -95,4 +95,15 @@ router.get("/:id", async (req, res) => {
   }
 });
 
+router.get("/:id/comments", async (req, res) => {
+  const ticketID = req.params.id;
+
+  try {
+    const tickets = await Tickets.findByIdWithComments(ticketID);
+    res.status(200).json(tickets);
+  } catch (error) {
+    res.status(500).json({ error });
+  }
+});
+
 module.exports = router;
