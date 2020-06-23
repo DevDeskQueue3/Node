@@ -112,7 +112,8 @@ ___
 ```json
 {
     "title": "new ticket!",
-    "description": "here's the description"
+    "description": "here's the description",
+    "what_ive_tried": "here's what I've tried"
 }
 ```
 
@@ -120,11 +121,12 @@ ___
 **Returns**
 ```json
 {
-    "id": 5,
-    "posted_at": "2020-06-20T17:14:50.285Z",
+    "id": 6,
+    "posted_at": "2020-06-23T02:52:36.742Z",
     "status": "OPEN",
     "title": "new ticket!",
-    "description": "here's the description"
+    "description": "here's the description",
+    "what_ive_tried": "here's what I've tried"
 }
 ```
 ___
@@ -135,7 +137,8 @@ ___
 ```json
 {
     "title": "updated ticket!",
-    "description": "here's the description"
+    "description": "here's the description",
+    "what_ive_tried": "here's what I've tried"
 }
 ```
 
@@ -143,11 +146,12 @@ ___
 **Returns**
 ```json
 {
-    "id": 5,
-    "posted_at": "2020-06-20T17:14:50.285Z",
+    "id": 6,
+    "posted_at": "2020-06-23T02:52:36.742Z",
     "status": "OPEN",
     "title": "updated ticket!",
-    "description": "here's the description"
+    "description": "here's the description",
+    "what_ive_tried": "here's what I've tried"
 }
 ```
 ___

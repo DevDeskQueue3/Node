@@ -39,6 +39,7 @@ exports.up = function (knex) {
         .defaultTo("OPEN");
       tbl.string("title").notNullable();
       tbl.text("description").notNullable();
+      tbl.text("what_ive_tried").notNullable();
     })
     .createTable("categories", (tbl) => {
       tbl

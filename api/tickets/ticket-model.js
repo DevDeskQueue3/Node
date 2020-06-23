@@ -19,6 +19,7 @@ function find() {
       "t.status",
       "t.title",
       "t.description",
+      "t.what_ive_tried",
       "cat.categories",
       "cl.id as claimed_by_id",
       "cl.name as claimed_by_name"
@@ -46,6 +47,7 @@ function findBy(filter) {
       "t.status",
       "t.title",
       "t.description",
+      "t.what_ive_tried",
       "cat.categories",
       "cl.id as claimed_by_id",
       "cl.name as claimed_by_name"
@@ -74,6 +76,7 @@ async function findById(ticketID) {
       "t.status",
       "t.title",
       "t.description",
+      "t.what_ive_tried",
       "cat.categories",
       "cl.id as claimed_by_id",
       "cl.name as claimed_by_name"
@@ -99,6 +102,7 @@ async function findByIdWithComments(ticketID) {
       "t.status",
       "t.title",
       "t.description",
+      "t.what_ive_tried",
       "c.id as claimed_by_id",
       "c.name as claimed_by_name",
       "comments.content",
@@ -111,20 +115,18 @@ async function findByIdWithComments(ticketID) {
     });
 }
 
-// Returns an array of all tickets with user names
-
-function update(ticket, ticketID, userID) {
-  return db("tickets")
-    .where({ id: ticketID, posted_by: userID })
-    .update(ticket)
-    .returning(["id", "posted_at", "status", "title", "description"]);
-}
-
 // Add new ticket to database
 function add(ticket) {
   return db("tickets")
     .insert(ticket)
-    .returning(["id", "posted_at", "status", "title", "description"]);
+    .returning([
+      "id",
+      "posted_at",
+      "status",
+      "title",
+      "description",
+      "what_ive_tried",
+    ]);
 }
 
 // Removes ticket selected by id posted by user with `userID`
@@ -137,7 +139,14 @@ function update(ticket, ticketID, userID) {
   return db("tickets")
     .where({ id: ticketID, posted_by: userID })
     .update(ticket)
-    .returning(["id", "posted_at", "status", "title", "description"]);
+    .returning([
+      "id",
+      "posted_at",
+      "status",
+      "title",
+      "description",
+      "what_ive_tried",
+    ]);
 }
 
 module.exports = {
