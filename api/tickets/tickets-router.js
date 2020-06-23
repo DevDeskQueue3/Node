@@ -25,6 +25,7 @@ router.get("/", async (req, res) => {
 router.post("/", async (req, res, next) => {
   const userID = req.jwt.id;
   const { title, description, what_ive_tried, categories } = req.body;
+
   if (!(title && description))
     return next({
       code: 400,
@@ -51,16 +52,22 @@ router.post("/", async (req, res, next) => {
 router.put("/:id", async (req, res, next) => {
   const userID = req.jwt.id;
   const ticketID = req.params.id;
-  const { title, description, what_ive_tried, categories } = req.body;
+  const { title, description, what_ive_tried, categories, status } = req.body;
 
-  if (!(title && description))
+  if (title === "" || description === "")
     return next({
       code: 400,
       message: "Please provide a title and description",
     });
 
+  if (status && !["OPEN", "CLOSED", "RESOLVED"].includes(status))
+    return next({
+      code: 400,
+      message: "Please provide a valid status",
+    });
+
   try {
-    const ticket = { title, description, what_ive_tried };
+    const ticket = { title, description, what_ive_tried, status };
     const updatedTicket = await Tickets.update(
       ticket,
       categories,
@@ -75,20 +82,60 @@ router.put("/:id", async (req, res, next) => {
   }
 });
 
-router.patch("/:id", async (req, res, next) => {
+router.patch("/:id/:action", async (req, res, next) => {
   const userID = req.jwt.id;
-  const ticketID = req.params.id;
-  const status = req.body.status;
+  const { id, action } = req.params;
+  let change;
+
+  switch (action) {
+    case "claim":
+      change = { claimed_by: userID };
+      break;
+
+    case "release":
+      change = { claimed_by: null };
+      break;
+
+    default:
+      return next({
+        code: 400,
+        message: "Please provide a valid action",
+      });
+  }
 
   try {
-    const changes = { status };
-    const [ticket] = await Tickets.update(changes, ticketID, userID);
-    res.status(201).json(ticket);
+    const ticket = await Tickets.findById(id);
+    if (ticket.posted_by_id === userID)
+      return next({
+        code: 403,
+        message: "You can't claim or release your own ticket",
+      });
+
+    if (ticket.claimed_by_id && ticket.claimed_by_id !== userID)
+      return next({
+        code: 403,
+        message: "This ticket is already claimed",
+      });
+
+    if (ticket.claimed_by_id === userID && action === "claim")
+      return next({
+        code: 403,
+        message: "You've already claimed this ticket",
+      });
+
+    if (!ticket.claimed_by_id && action === "release")
+      return next({
+        code: 403,
+        message: "Nobody has claimed this ticket",
+      });
+
+    const [updatedTicket] = await Tickets.assert(change, id);
+    res.status(201).json(updatedTicket);
   } catch (err) {
     console.error(err);
     next({
       code: 500,
-      message: "There was a problem updating the ticket status",
+      message: "There was a problem updating the ticket",
     });
   }
 });

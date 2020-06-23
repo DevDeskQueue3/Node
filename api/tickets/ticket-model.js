@@ -149,6 +149,7 @@ function update(ticket, categories, ticketID, userID) {
         .where({ id: ticketID, posted_by: userID })
         .update(ticket, "id")
         .then(async function ([id]) {
+          if (!categories) return id;
           await db("categories")
             .transacting(trx)
             .where({ ticket_id: id })
@@ -164,7 +165,15 @@ function update(ticket, categories, ticketID, userID) {
     .then((id) => findById(id));
 }
 
+// asserts a change on any ticket
+function assert(change, ticketID) {
+  return db("tickets")
+    .where({ id: ticketID })
+    .update(change, ["id as ticket_id", "claimed_by"]);
+}
+
 module.exports = {
+  assert,
   find,
   findBy,
   findById,
