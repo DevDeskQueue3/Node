@@ -57,7 +57,7 @@ router.post("/", async (req, res, next) => {
 router.put("/:id", async (req, res, next) => {
   const userID = req.jwt.id;
   const ticketID = req.params.id;
-  const { title, description, what_ive_tried, categories, status } = req.body;
+  const { title, description, what_ive_tried, categories } = req.body;
 
   if (title === "" || description === "")
     return next({
@@ -65,14 +65,8 @@ router.put("/:id", async (req, res, next) => {
       message: "Please provide a title and description",
     });
 
-  if (status && !["OPEN", "CLOSED", "RESOLVED"].includes(status))
-    return next({
-      code: 400,
-      message: "Please provide a valid status",
-    });
-
   try {
-    const ticket = { title, description, what_ive_tried, status };
+    const ticket = { title, description, what_ive_tried };
     const updatedTicket = await Tickets.update(
       ticket,
       categories,
@@ -89,7 +83,8 @@ router.put("/:id", async (req, res, next) => {
 
 router.patch("/:id/:action", async (req, res, next) => {
   const userID = req.jwt.id;
-  const { id, action } = req.params;
+  const ticketID = req.params.id;
+  const action = req.params.action.toLowerCase();
   let change;
 
   switch (action) {
@@ -101,6 +96,18 @@ router.patch("/:id/:action", async (req, res, next) => {
       change = { claimed_by: null };
       break;
 
+    case "open":
+      change = { status: "OPEN" };
+      break;
+
+    case "close":
+      change = { status: "CLOSED" };
+      break;
+
+    case "resolve":
+      change = { status: "RESOLVED" };
+      break;
+
     default:
       return next({
         code: 400,
@@ -109,23 +116,12 @@ router.patch("/:id/:action", async (req, res, next) => {
   }
 
   try {
-    const ticket = await Tickets.findById(id);
-    if (ticket.posted_by_id === userID)
-      return next({
-        code: 403,
-        message: "You can't claim or release your own ticket",
-      });
+    const ticket = await Tickets.findById(ticketID);
 
     if (ticket.claimed_by_id && ticket.claimed_by_id !== userID)
       return next({
         code: 403,
         message: "This ticket is already claimed",
-      });
-
-    if (ticket.claimed_by_id === userID && action === "claim")
-      return next({
-        code: 403,
-        message: "You've already claimed this ticket",
       });
 
     if (!ticket.claimed_by_id && action === "release")
@@ -134,7 +130,23 @@ router.patch("/:id/:action", async (req, res, next) => {
         message: "Nobody has claimed this ticket",
       });
 
-    const [updatedTicket] = await Tickets.assert(change, id);
+    if (ticket.posted_by_id === userID) {
+      if (action === "claim" || action === "release")
+        return next({
+          code: 403,
+          message: "You can't claim or release your own ticket",
+        });
+    }
+
+    if (ticket.claimed_by_id === userID) {
+      if (action === "claim")
+        return next({
+          code: 403,
+          message: "You've already claimed this ticket",
+        });
+    }
+
+    const [updatedTicket] = await Tickets.assert(change, ticketID);
     res.status(201).json(updatedTicket);
   } catch (err) {
     console.error(err);

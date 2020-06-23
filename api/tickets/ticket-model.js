@@ -169,7 +169,7 @@ function update(ticket, categories, ticketID, userID) {
 function assert(change, ticketID) {
   return db("tickets")
     .where({ id: ticketID })
-    .update(change, ["id as ticket_id", "claimed_by"]);
+    .update(change, ["id as ticket_id", "claimed_by", "status"]);
 }
 
 module.exports = {
