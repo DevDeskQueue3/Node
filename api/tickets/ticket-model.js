@@ -24,7 +24,7 @@ function find() {
       "cl.id as claimed_by_id",
       "cl.name as claimed_by_name"
     )
-    .orderBy("posted_at");
+    .orderBy("t.id");
 }
 
 // Returns an array of all tickets filtered by ticket status
@@ -53,7 +53,7 @@ function findBy(filter) {
       "cl.name as claimed_by_name"
     )
     .where(filter)
-    .orderBy("posted_at");
+    .orderBy("t.id");
 }
 
 // Returns ticket of specified id
@@ -109,24 +109,30 @@ async function findByIdWithComments(ticketID) {
       "comments.posted_by as comments_by",
       "comments.posted_at as comments_at"
     )
-    .orderBy("posted_at")
+    .orderBy("t.id")
     .where({
       "t.id": ticketID,
     });
 }
 
 // Add new ticket to database
-function add(ticket) {
-  return db("tickets")
-    .insert(ticket)
-    .returning([
-      "id",
-      "posted_at",
-      "status",
-      "title",
-      "description",
-      "what_ive_tried",
-    ]);
+function add(ticket, categories) {
+  return db
+    .transaction(function (trx) {
+      return trx
+        .insert(ticket, "id")
+        .into("tickets")
+        .then(async function ([id]) {
+          if (!categories) return id;
+          const rows = categories.map((category) => ({
+            ticket_id: id,
+            category,
+          }));
+          await db.batchInsert("categories", rows).transacting(trx);
+          return id;
+        });
+    })
+    .then((id) => findById(id));
 }
 
 // Removes ticket selected by id posted by user with `userID`
@@ -135,21 +141,39 @@ function remove(ticketID, userID) {
 }
 
 // Updates ticket by id
-function update(ticket, ticketID, userID) {
+function update(ticket, categories, ticketID, userID) {
+  return db
+    .transaction(function (trx) {
+      return db("tickets")
+        .transacting(trx)
+        .where({ id: ticketID, posted_by: userID })
+        .update(ticket, "id")
+        .then(async function ([id]) {
+          if (!categories) return id;
+          await db("categories")
+            .transacting(trx)
+            .where({ ticket_id: id })
+            .del();
+          const rows = categories.map((category) => ({
+            ticket_id: id,
+            category,
+          }));
+          await db.batchInsert("categories", rows).transacting(trx);
+          return id;
+        });
+    })
+    .then((id) => findById(id));
+}
+
+// asserts a change on any ticket
+function assert(change, ticketID) {
   return db("tickets")
-    .where({ id: ticketID, posted_by: userID })
-    .update(ticket)
-    .returning([
-      "id",
-      "posted_at",
-      "status",
-      "title",
-      "description",
-      "what_ive_tried",
-    ]);
+    .where({ id: ticketID })
+    .update(change, ["id as ticket_id", "claimed_by", "status"]);
 }
 
 module.exports = {
+  assert,
   find,
   findBy,
   findById,

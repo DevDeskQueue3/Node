@@ -73,16 +73,27 @@ ___
 
 ### Tickets
 
-| Method | URL              | Description                                                                    |
-| ------ | ---------------- | ------------------------------------------------------------------------------ |
-| GET    | /api/tickets     | Returns an array of all tickets                                                |
-| POST   | /api/tickets     | Creates a new ticket for the logged in user. Returns the ticket                |
-| PUT    | /api/tickets/:id | Updates an existing ticket belonging to the logged in user. Returns the ticket |
-| DELETE | /api/tickets/:id | Deletes a ticket by ID                                                         |
+| Method | URL                      | Description                                                                    |
+| ------ | ------------------------ | ------------------------------------------------------------------------------ |
+| GET    | /api/tickets             | Returns an array of all tickets, or filtered by status                         |
+| POST   | /api/tickets             | Creates a new ticket for the logged in user. Returns the ticket                |
+| PUT    | /api/tickets/:id         | Updates an existing ticket belonging to the logged in user. Returns the ticket |
+| DELETE | /api/tickets/:id         | Deletes a ticket by ID                                                         |
+| PATCH  | /api/tickets/:id/claim   | Claim a ticket belonging to another user                                       |
+| PATCH  | /api/tickets/:id/release | Release a ticket the logged in user has already claimed                        |
+| PATCH  | /api/tickets/:id/open    | Mark a ticket as OPEN                                                          |
+| PATCH  | /api/tickets/:id/close   | Mark a ticket as CLOSED                                                        |
+| PATCH  | /api/tickets/:id/resolve | Mark a ticket as RESOLVED                                                      |
 
 
 ___
 `GET /api/tickets`
+
+`GET /api/tickets?status=OPEN`
+
+`GET /api/tickets?status=CLOSED`
+
+`GET /api/tickets?status=RESOLVED`
 
 **Returns**
 ```json
@@ -113,7 +124,8 @@ ___
 {
     "title": "new ticket!",
     "description": "here's the description",
-    "what_ive_tried": "here's what I've tried"
+    "what_ive_tried": "here's what I've tried",
+    "categories": ["category 1", "category 2", "category 3"]
 }
 ```
 
@@ -121,12 +133,21 @@ ___
 **Returns**
 ```json
 {
-    "id": 6,
-    "posted_at": "2020-06-23T02:52:36.742Z",
+    "ticket_id": 42,
+    "posted_by_id": 5,
+    "posted_by_name": "Alice",
+    "posted_at": "2020-06-23T04:54:54.063Z",
     "status": "OPEN",
     "title": "new ticket!",
     "description": "here's the description",
-    "what_ive_tried": "here's what I've tried"
+    "what_ive_tried": "here's what I've tried",
+    "categories": [
+        "category 1",
+        "category 2",
+        "category 3"
+    ],
+    "claimed_by_id": null,
+    "claimed_by_name": null
 }
 ```
 ___
@@ -138,7 +159,8 @@ ___
 {
     "title": "updated ticket!",
     "description": "here's the description",
-    "what_ive_tried": "here's what I've tried"
+    "what_ive_tried": "here's what I've tried",
+    "categories": ["new category", "category 2", "category 3"]
 }
 ```
 
@@ -146,12 +168,88 @@ ___
 **Returns**
 ```json
 {
-    "id": 6,
-    "posted_at": "2020-06-23T02:52:36.742Z",
+    "ticket_id": 42,
+    "posted_by_id": 5,
+    "posted_by_name": "Alice",
+    "posted_at": "2020-06-23T04:53:53.770Z",
     "status": "OPEN",
     "title": "updated ticket!",
     "description": "here's the description",
-    "what_ive_tried": "here's what I've tried"
+    "what_ive_tried": "here's what I've tried",
+    "categories": [
+        "new category",
+        "category 2",
+        "category 3"
+    ],
+    "claimed_by_id": null,
+    "claimed_by_name": null
 }
 ```
 ___
+
+`PATCH /api/tickets/:id/claim`
+
+**Returns**
+```json
+{
+    "ticket_id": 1,
+    "claimed_by": 5,
+    "status": "OPEN"
+}
+```
+
+___
+
+
+`PATCH /api/tickets/:id/release`
+
+**Returns**
+```json
+{
+    "ticket_id": 1,
+    "claimed_by": null,
+    "status": "OPEN"
+}
+```
+
+___
+
+
+`PATCH /api/tickets/:id/open`
+
+**Returns**
+```json
+{
+    "ticket_id": 1,
+    "claimed_by": null,
+    "status": "OPEN"
+}
+```
+
+___
+
+
+`PATCH /api/tickets/:id/close`
+
+**Returns**
+```json
+{
+    "ticket_id": 1,
+    "claimed_by": null,
+    "status": "CLOSED"
+}
+```
+
+___
+
+
+`PATCH /api/tickets/:id/resolve`
+
+**Returns**
+```json
+{
+    "ticket_id": 1,
+    "claimed_by": null,
+    "status": "RESOLVED"
+}
+```
