@@ -9,6 +9,7 @@ exports.seed = function (knex, Promise) {
           status: "OPEN",
           title: "Ticket 1",
           description: "Ticket 1 description text ",
+          what_ive_tried: "The steps that I've tried for ticket 1",
         },
         {
           id: 2,
@@ -17,6 +18,7 @@ exports.seed = function (knex, Promise) {
           status: "OPEN",
           title: "Ticket 2",
           description: "Ticket 2 description text ",
+          what_ive_tried: "The steps that I've tried for ticket 2",
         },
         {
           id: 3,
@@ -25,6 +27,7 @@ exports.seed = function (knex, Promise) {
           status: "OPEN",
           title: "Ticket 3",
           description: "Ticket 3 description text ",
+          what_ive_tried: "The steps that I've tried for ticket 3",
         },
         {
           id: 4,
@@ -33,6 +36,7 @@ exports.seed = function (knex, Promise) {
           status: "CLOSED",
           title: "Ticket 4",
           description: "Ticket 4 description text ",
+          what_ive_tried: "The steps that I've tried for ticket 4",
         },
       ]);
     })

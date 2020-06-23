@@ -24,7 +24,7 @@ router.get("/", async (req, res) => {
 
 router.post("/", async (req, res, next) => {
   const userID = req.jwt.id;
-  const { title, description } = req.body;
+  const { title, description, what_ive_tried } = req.body;
   if (!(title && description))
     return next({
       code: 400,
@@ -36,6 +36,7 @@ router.post("/", async (req, res, next) => {
       posted_by: userID,
       title,
       description,
+      what_ive_tried,
     });
     res.status(201).json(ticket);
   } catch (err) {
@@ -47,7 +48,7 @@ router.post("/", async (req, res, next) => {
 router.put("/:id", async (req, res, next) => {
   const userID = req.jwt.id;
   const ticketID = req.params.id;
-  const { title, description } = req.body;
+  const { title, description, what_ive_tried } = req.body;
 
   if (!(title && description))
     return next({
@@ -56,7 +57,7 @@ router.put("/:id", async (req, res, next) => {
     });
 
   try {
-    const changes = { title, description };
+    const changes = { title, description, what_ive_tried };
     const [ticket] = await Tickets.update(changes, ticketID, userID);
     // TODO: handle attempting to update another user's ticket
     res.status(201).json(ticket);
