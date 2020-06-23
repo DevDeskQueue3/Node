@@ -73,16 +73,24 @@ ___
 
 ### Tickets
 
-| Method | URL              | Description                                                                    |
-| ------ | ---------------- | ------------------------------------------------------------------------------ |
-| GET    | /api/tickets     | Returns an array of all tickets                                                |
-| POST   | /api/tickets     | Creates a new ticket for the logged in user. Returns the ticket                |
-| PUT    | /api/tickets/:id | Updates an existing ticket belonging to the logged in user. Returns the ticket |
-| DELETE | /api/tickets/:id | Deletes a ticket by ID                                                         |
+| Method | URL                      | Description                                                                    |
+| ------ | ------------------------ | ------------------------------------------------------------------------------ |
+| GET    | /api/tickets             | Returns an array of all tickets, or filtered by status                         |
+| POST   | /api/tickets             | Creates a new ticket for the logged in user. Returns the ticket                |
+| PUT    | /api/tickets/:id         | Updates an existing ticket belonging to the logged in user. Returns the ticket |
+| DELETE | /api/tickets/:id         | Deletes a ticket by ID                                                         |
+| PATCH  | /api/tickets/:id/claim   | Claim a ticket belonging to another user                                       |
+| PATCH  | /api/tickets/:id/release | Release a ticket the logged in user has already claimed                        |
 
 
 ___
 `GET /api/tickets`
+
+`GET /api/tickets?status=OPEN`
+
+`GET /api/tickets?status=CLOSED`
+
+`GET /api/tickets?status=RESOLVED`
 
 **Returns**
 ```json
@@ -175,3 +183,26 @@ ___
 }
 ```
 ___
+
+`PATCH /api/tickets/:id/:claim`
+
+**Returns**
+```json
+{
+    "ticket_id": 1,
+    "claimed_by": 5
+}
+```
+
+___
+
+
+`PATCH /api/tickets/:id/:release`
+
+**Returns**
+```json
+{
+    "ticket_id": 1,
+    "claimed_by": null
+}
+```
