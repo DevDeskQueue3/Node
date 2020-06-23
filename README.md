@@ -187,7 +187,7 @@ ___
 ```
 ___
 
-`PATCH /api/tickets/:id/:claim`
+`PATCH /api/tickets/:id/claim`
 
 **Returns**
 ```json
@@ -201,7 +201,7 @@ ___
 ___
 
 
-`PATCH /api/tickets/:id/:release`
+`PATCH /api/tickets/:id/release`
 
 **Returns**
 ```json
@@ -209,5 +209,47 @@ ___
     "ticket_id": 1,
     "claimed_by": null,
     "status": "OPEN"
+}
+```
+
+___
+
+
+`PATCH /api/tickets/:id/open`
+
+**Returns**
+```json
+{
+    "ticket_id": 1,
+    "claimed_by": null,
+    "status": "OPEN"
+}
+```
+
+___
+
+
+`PATCH /api/tickets/:id/close`
+
+**Returns**
+```json
+{
+    "ticket_id": 1,
+    "claimed_by": null,
+    "status": "CLOSED"
+}
+```
+
+___
+
+
+`PATCH /api/tickets/:id/resolve`
+
+**Returns**
+```json
+{
+    "ticket_id": 1,
+    "claimed_by": null,
+    "status": "RESOLVED"
 }
 ```
