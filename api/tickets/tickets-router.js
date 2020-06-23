@@ -2,23 +2,28 @@ const express = require("express");
 const router = express.Router();
 const Tickets = require("./ticket-model.js");
 
-router.get("/", async (req, res) => {
-  const { status } = req.query;
-
+router.get("/", async (req, res, next) => {
   if (req.query.status) {
-    try {
-      const tickets = await Tickets.findBy({ status });
-      res.json(tickets);
-    } catch (error) {
-      res.status(500).json({ error });
-    }
+    const status = req.query.status.toUpperCase();
+    if (!["OPEN", "CLOSED", "RESOLVED"].includes(status))
+      return next({
+        code: 400,
+        message: "Please provide a valid status",
+      });
+
+    Tickets.findBy({ status })
+      .then((tickets) => res.json(tickets))
+      .catch((err) => {
+        console.error(err);
+        next({ code: 500, message: "There was a problem getting the tickets" });
+      });
   } else {
-    try {
-      const tickets = await Tickets.find();
-      res.json(tickets);
-    } catch (error) {
-      res.status(500).json({ error });
-    }
+    Tickets.find()
+      .then((tickets) => res.json(tickets))
+      .catch((err) => {
+        console.error(err);
+        next({ code: 500, message: "There was a problem getting the tickets" });
+      });
   }
 });
 
