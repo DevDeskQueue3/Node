@@ -66,6 +66,24 @@ router.put("/:id", async (req, res, next) => {
   }
 });
 
+router.patch("/:id", async (req, res, next) => {
+  const userID = req.jwt.id;
+  const ticketID = req.params.id;
+  const status = req.body.status;
+
+  try {
+    const changes = { status };
+    const [ticket] = await Tickets.update(changes, ticketID, userID);
+    res.status(201).json(ticket);
+  } catch (err) {
+    console.error(err);
+    next({
+      code: 500,
+      message: "There was a problem updating the ticket status",
+    });
+  }
+});
+
 router.delete("/:id", async (req, res, next) => {
   const ticketID = req.params.id;
   const userID = req.jwt.id;
