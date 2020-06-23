@@ -95,6 +95,10 @@ ___
 
 `GET /api/tickets?status=RESOLVED`
 
+`GET /api/tickets?status=CLAIMED`
+
+`GET /api/tickets?status=UNCLAIMED`
+
 **Returns**
 ```json
 [
