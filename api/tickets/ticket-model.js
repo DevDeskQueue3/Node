@@ -141,18 +141,27 @@ function remove(ticketID, userID) {
 }
 
 // Updates ticket by id
-function update(ticket, ticketID, userID) {
-  return db("tickets")
-    .where({ id: ticketID, posted_by: userID })
-    .update(ticket)
-    .returning([
-      "id",
-      "posted_at",
-      "status",
-      "title",
-      "description",
-      "what_ive_tried",
-    ]);
+function update(ticket, categories, ticketID, userID) {
+  return db
+    .transaction(function (trx) {
+      return db("tickets")
+        .transacting(trx)
+        .where({ id: ticketID, posted_by: userID })
+        .update(ticket, "id")
+        .then(async function ([id]) {
+          await db("categories")
+            .transacting(trx)
+            .where({ ticket_id: id })
+            .del();
+          const rows = categories.map((category) => ({
+            ticket_id: id,
+            category,
+          }));
+          await db.batchInsert("categories", rows).transacting(trx);
+          return id;
+        });
+    })
+    .then((id) => findById(id));
 }
 
 module.exports = {

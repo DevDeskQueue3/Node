@@ -51,7 +51,7 @@ router.post("/", async (req, res, next) => {
 router.put("/:id", async (req, res, next) => {
   const userID = req.jwt.id;
   const ticketID = req.params.id;
-  const { title, description, what_ive_tried } = req.body;
+  const { title, description, what_ive_tried, categories } = req.body;
 
   if (!(title && description))
     return next({
@@ -60,10 +60,15 @@ router.put("/:id", async (req, res, next) => {
     });
 
   try {
-    const changes = { title, description, what_ive_tried };
-    const [ticket] = await Tickets.update(changes, ticketID, userID);
+    const ticket = { title, description, what_ive_tried };
+    const updatedTicket = await Tickets.update(
+      ticket,
+      categories,
+      ticketID,
+      userID
+    );
     // TODO: handle attempting to update another user's ticket
-    res.status(201).json(ticket);
+    res.status(201).json(updatedTicket);
   } catch (err) {
     console.error(err);
     next({ code: 500, message: "There was a problem updating the ticket" });
