@@ -52,7 +52,11 @@ function findBy(filter) {
       "cl.id as claimed_by_id",
       "cl.name as claimed_by_name"
     )
-    .where(filter)
+    .where((builder) => {
+      if (filter.status) builder.where(filter);
+      if (filter.claimed_by === null) builder.whereNull("claimed_by");
+      if (filter.claimed_by === true) builder.whereNotNull("claimed_by");
+    })
     .orderBy("t.id");
 }
 
