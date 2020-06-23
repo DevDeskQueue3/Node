@@ -53,10 +53,10 @@ function findBy(filter) {
       "cl.name as claimed_by_name"
     )
     .where((builder) => {
-      const { status, claimed_by, posted_by } = filter;
-      if (status === "UNCLAIMED") builder.whereNull("claimed_by");
-      else if (status === "CLAIMED") builder.whereNotNull("claimed_by");
-      else if (status) builder.where({ status });
+      const { status, claimed, claimed_by, posted_by } = filter;
+      if (claimed === true) builder.whereNotNull("claimed_by");
+      else if (claimed === false) builder.whereNull("claimed_by");
+      if (status) builder.where({ status });
       if (claimed_by) builder.where({ claimed_by });
       if (posted_by) builder.where({ posted_by });
     })

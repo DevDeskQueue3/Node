@@ -95,9 +95,9 @@ ___
 
 `GET /api/tickets?status=RESOLVED`
 
-`GET /api/tickets?status=CLAIMED`
+`GET /api/tickets?claimed=TRUE`
 
-`GET /api/tickets?status=UNCLAIMED`
+`GET /api/tickets?claimed=FALSE`
 
 `GET /api/tickets?claimed_by=USER_ID`
 

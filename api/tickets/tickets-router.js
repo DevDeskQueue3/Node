@@ -2,11 +2,12 @@ const express = require("express");
 const router = express.Router();
 const Tickets = require("./ticket-model.js");
 
-const validStatuses = ["OPEN", "CLOSED", "RESOLVED", "CLAIMED", "UNCLAIMED"];
+const validStatuses = ["OPEN", "CLOSED", "RESOLVED"];
 
 router.get("/", async (req, res, next) => {
   if (Object.keys(req.query).length) {
     const filter = req.query;
+
     if (filter.status) {
       filter.status = filter.status.toUpperCase();
       if (!validStatuses.includes(filter.status)) {
@@ -15,6 +16,12 @@ router.get("/", async (req, res, next) => {
           message: "Please provide a valid status",
         });
       }
+    }
+
+    if (filter.claimed) {
+      filter.claimed = filter.claimed.toUpperCase();
+      if (filter.claimed === "TRUE") filter.claimed = true;
+      else if (filter.claimed === "FALSE") filter.claimed = false;
     }
 
     Tickets.findBy(filter)
