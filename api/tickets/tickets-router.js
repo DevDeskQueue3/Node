@@ -84,27 +84,27 @@ router.put("/:id", async (req, res, next) => {
 router.patch("/:id/:action", async (req, res, next) => {
   const userID = req.jwt.id;
   const ticketID = req.params.id;
-  const action = req.params.action.toLowerCase();
+  const action = req.params.action.toUpperCase();
   let change;
 
   switch (action) {
-    case "claim":
+    case "CLAIM":
       change = { claimed_by: userID };
       break;
 
-    case "release":
+    case "RELEASE":
       change = { claimed_by: null };
       break;
 
-    case "open":
+    case "OPEN":
       change = { status: "OPEN" };
       break;
 
-    case "close":
+    case "CLOSE":
       change = { status: "CLOSED" };
       break;
 
-    case "resolve":
+    case "RESOLVE":
       change = { status: "RESOLVED" };
       break;
 
