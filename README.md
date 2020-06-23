@@ -88,15 +88,20 @@ ___
 ```json
 [
     {
-        "ticket_id": 1,
-        "posted_by_id": 1,
-        "posted_by_name": "testuser1",
-        "posted_at": "2020-06-20T17:59:42.464Z",
-        "status": "OPEN",
-        "title": "Ticket 1",
-        "description": "Ticket 1 description text ",
-        "claimed_by_id": null,
-        "claimed_by_name": null
+    "ticket_id": 3,
+    "posted_by_id": 2,
+    "posted_by_name": "testuser2",
+    "posted_at": "2020-06-23T01:49:29.454Z",
+    "status": "OPEN",
+    "title": "Ticket 3",
+    "description": "Ticket 3 description text ",
+    "categories": [
+        "CSS",
+        "HTML",
+        "React"
+    ],
+    "claimed_by_id": 1,
+    "claimed_by_name": "testuser1"
     }
 ]
 ```
