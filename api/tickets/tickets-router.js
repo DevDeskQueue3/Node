@@ -2,37 +2,19 @@ const express = require("express");
 const router = express.Router();
 const Tickets = require("./ticket-model.js");
 
+const validStatuses = ["OPEN", "CLOSED", "RESOLVED", "CLAIMED", "UNCLAIMED"];
+
 router.get("/", async (req, res, next) => {
-  if (req.query.status) {
-    const status = req.query.status.toUpperCase();
-    let filter;
-
-    switch (status) {
-      case "OPEN":
-        filter = { status: "OPEN" };
-        break;
-
-      case "CLOSED":
-        filter = { status: "CLOSED" };
-        break;
-
-      case "RESOLVED":
-        filter = { status: "RESOLVED" };
-        break;
-
-      case "CLAIMED":
-        filter = { claimed_by: true };
-        break;
-
-      case "UNCLAIMED":
-        filter = { claimed_by: null };
-        break;
-
-      default:
+  if (Object.keys(req.query).length) {
+    const filter = req.query;
+    if (filter.status) {
+      filter.status = filter.status.toUpperCase();
+      if (!validStatuses.includes(filter.status)) {
         return next({
           code: 400,
           message: "Please provide a valid status",
         });
+      }
     }
 
     Tickets.findBy(filter)
