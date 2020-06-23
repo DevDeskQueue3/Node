@@ -1,10 +1,16 @@
 const db = require("../../dbConfig.js");
 
 // Returns an array of all tickets with user names and ids
-async function find(filter) {
+function find() {
   return db("tickets as t")
+    .with("cat", (qb) => {
+      qb.select("ticket_id", db.raw("ARRAY_AGG(category) as categories"))
+        .from("categories")
+        .groupBy("ticket_id");
+    })
     .join("users as p", "p.id", "t.posted_by")
-    .leftJoin("users as c", "c.id", "t.claimed_by")
+    .leftJoin("users as cl", "cl.id", "t.claimed_by")
+    .leftJoin("cat", "cat.ticket_id", "t.id")
     .select(
       "t.id as ticket_id",
       "p.id as posted_by_id",
@@ -13,18 +19,25 @@ async function find(filter) {
       "t.status",
       "t.title",
       "t.description",
-      "c.id as claimed_by_id",
-      "c.name as claimed_by_name"
+      "cat.categories",
+      "cl.id as claimed_by_id",
+      "cl.name as claimed_by_name"
     )
     .orderBy("posted_at");
 }
 
 // Returns an array of all tickets filtered by ticket status
 
-async function findBy(filter) {
+function findBy(filter) {
   return db("tickets as t")
+    .with("cat", (qb) => {
+      qb.select("ticket_id", db.raw("ARRAY_AGG(category) as categories"))
+        .from("categories")
+        .groupBy("ticket_id");
+    })
     .join("users as p", "p.id", "t.posted_by")
-    .leftJoin("users as c", "c.id", "t.claimed_by")
+    .leftJoin("users as cl", "cl.id", "t.claimed_by")
+    .leftJoin("cat", "cat.ticket_id", "t.id")
     .select(
       "t.id as ticket_id",
       "p.id as posted_by_id",
@@ -33,19 +46,26 @@ async function findBy(filter) {
       "t.status",
       "t.title",
       "t.description",
-      "c.id as claimed_by_id",
-      "c.name as claimed_by_name"
+      "cat.categories",
+      "cl.id as claimed_by_id",
+      "cl.name as claimed_by_name"
     )
-    .orderBy("posted_at")
-    .where({ "t.status": filter });
+    .where(filter)
+    .orderBy("posted_at");
 }
 
 // Returns ticket of specified id
 
 async function findById(ticketID) {
   return db("tickets as t")
+    .with("cat", (qb) => {
+      qb.select("ticket_id", db.raw("ARRAY_AGG(category) as categories"))
+        .from("categories")
+        .groupBy("ticket_id");
+    })
     .join("users as p", "p.id", "t.posted_by")
-    .leftJoin("users as c", "c.id", "t.claimed_by")
+    .leftJoin("users as cl", "cl.id", "t.claimed_by")
+    .leftJoin("cat", "cat.ticket_id", "t.id")
     .select(
       "t.id as ticket_id",
       "p.id as posted_by_id",
@@ -54,13 +74,14 @@ async function findById(ticketID) {
       "t.status",
       "t.title",
       "t.description",
-      "c.id as claimed_by_id",
-      "c.name as claimed_by_name"
+      "cat.categories",
+      "cl.id as claimed_by_id",
+      "cl.name as claimed_by_name"
     )
-    .orderBy("posted_at")
     .where({
       "t.id": ticketID,
-    });
+    })
+    .first();
 }
 
 // Returns ticket of specified id with comments
