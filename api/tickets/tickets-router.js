@@ -24,7 +24,7 @@ router.get("/", async (req, res) => {
 
 router.post("/", async (req, res, next) => {
   const userID = req.jwt.id;
-  const { title, description, what_ive_tried } = req.body;
+  const { title, description, what_ive_tried, categories } = req.body;
   if (!(title && description))
     return next({
       code: 400,
@@ -32,12 +32,15 @@ router.post("/", async (req, res, next) => {
     });
 
   try {
-    const [ticket] = await Tickets.add({
-      posted_by: userID,
-      title,
-      description,
-      what_ive_tried,
-    });
+    const ticket = await Tickets.add(
+      {
+        posted_by: userID,
+        title,
+        description,
+        what_ive_tried,
+      },
+      categories
+    );
     res.status(201).json(ticket);
   } catch (err) {
     console.error(err);

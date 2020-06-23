@@ -116,17 +116,23 @@ async function findByIdWithComments(ticketID) {
 }
 
 // Add new ticket to database
-function add(ticket) {
-  return db("tickets")
-    .insert(ticket)
-    .returning([
-      "id",
-      "posted_at",
-      "status",
-      "title",
-      "description",
-      "what_ive_tried",
-    ]);
+function add(ticket, categories) {
+  return db
+    .transaction(function (trx) {
+      return trx
+        .insert(ticket, "id")
+        .into("tickets")
+        .then(async function ([id]) {
+          if (!categories) return id;
+          const rows = categories.map((category) => ({
+            ticket_id: id,
+            category,
+          }));
+          await db.batchInsert("categories", rows).transacting(trx);
+          return id;
+        });
+    })
+    .then((id) => findById(id));
 }
 
 // Removes ticket selected by id posted by user with `userID`
