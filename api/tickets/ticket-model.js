@@ -24,7 +24,7 @@ function find() {
       "cl.id as claimed_by_id",
       "cl.name as claimed_by_name"
     )
-    .orderBy("posted_at");
+    .orderBy("t.id");
 }
 
 // Returns an array of all tickets filtered by ticket status
@@ -53,7 +53,7 @@ function findBy(filter) {
       "cl.name as claimed_by_name"
     )
     .where(filter)
-    .orderBy("posted_at");
+    .orderBy("t.id");
 }
 
 // Returns ticket of specified id
@@ -109,7 +109,7 @@ async function findByIdWithComments(ticketID) {
       "comments.posted_by as comments_by",
       "comments.posted_at as comments_at"
     )
-    .orderBy("posted_at")
+    .orderBy("t.id")
     .where({
       "t.id": ticketID,
     });
