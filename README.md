@@ -81,6 +81,9 @@ ___
 | DELETE | /api/tickets/:id         | Deletes a ticket by ID                                                         |
 | PATCH  | /api/tickets/:id/claim   | Claim a ticket belonging to another user                                       |
 | PATCH  | /api/tickets/:id/release | Release a ticket the logged in user has already claimed                        |
+| PATCH  | /api/tickets/:id/open    | Mark a ticket as OPEN                                                          |
+| PATCH  | /api/tickets/:id/close   | Mark a ticket as CLOSED                                                        |
+| PATCH  | /api/tickets/:id/resolve | Mark a ticket as RESOLVED                                                      |
 
 
 ___
@@ -190,7 +193,8 @@ ___
 ```json
 {
     "ticket_id": 1,
-    "claimed_by": 5
+    "claimed_by": 5,
+    "status": "OPEN"
 }
 ```
 
@@ -203,6 +207,7 @@ ___
 ```json
 {
     "ticket_id": 1,
-    "claimed_by": null
+    "claimed_by": null,
+    "status": "OPEN"
 }
 ```
