@@ -113,7 +113,8 @@ ___
 {
     "title": "new ticket!",
     "description": "here's the description",
-    "what_ive_tried": "here's what I've tried"
+    "what_ive_tried": "here's what I've tried",
+    "categories": ["category 1", "category 2", "category 3"]
 }
 ```
 
@@ -121,12 +122,21 @@ ___
 **Returns**
 ```json
 {
-    "id": 6,
-    "posted_at": "2020-06-23T02:52:36.742Z",
+    "ticket_id": 42,
+    "posted_by_id": 5,
+    "posted_by_name": "Alice",
+    "posted_at": "2020-06-23T04:54:54.063Z",
     "status": "OPEN",
     "title": "new ticket!",
     "description": "here's the description",
-    "what_ive_tried": "here's what I've tried"
+    "what_ive_tried": "here's what I've tried",
+    "categories": [
+        "category 1",
+        "category 2",
+        "category 3"
+    ],
+    "claimed_by_id": null,
+    "claimed_by_name": null
 }
 ```
 ___
@@ -138,7 +148,8 @@ ___
 {
     "title": "updated ticket!",
     "description": "here's the description",
-    "what_ive_tried": "here's what I've tried"
+    "what_ive_tried": "here's what I've tried",
+    "categories": ["new category", "category 2", "category 3"]
 }
 ```
 
@@ -146,12 +157,21 @@ ___
 **Returns**
 ```json
 {
-    "id": 6,
-    "posted_at": "2020-06-23T02:52:36.742Z",
+    "ticket_id": 42,
+    "posted_by_id": 5,
+    "posted_by_name": "Alice",
+    "posted_at": "2020-06-23T04:53:53.770Z",
     "status": "OPEN",
     "title": "updated ticket!",
     "description": "here's the description",
-    "what_ive_tried": "here's what I've tried"
+    "what_ive_tried": "here's what I've tried",
+    "categories": [
+        "new category",
+        "category 2",
+        "category 3"
+    ],
+    "claimed_by_id": null,
+    "claimed_by_name": null
 }
 ```
 ___
