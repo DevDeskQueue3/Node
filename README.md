@@ -75,7 +75,7 @@ ___
 
 | Method | URL                      | Description                                                                    |
 | ------ | ------------------------ | ------------------------------------------------------------------------------ |
-| GET    | /api/tickets             | Returns an array of all tickets, or filtered by status                         |
+| GET    | /api/tickets             | Returns an array of all tickets, or filtered by status and/or associated users |
 | POST   | /api/tickets             | Creates a new ticket for the logged in user. Returns the ticket                |
 | PUT    | /api/tickets/:id         | Updates an existing ticket belonging to the logged in user. Returns the ticket |
 | DELETE | /api/tickets/:id         | Deletes a ticket by ID                                                         |
@@ -99,7 +99,11 @@ ___
 
 `GET /api/tickets?status=UNCLAIMED`
 
-**Returns**
+`GET /api/tickets?claimed_by=USER_ID`
+
+`GET /api/tickets?posted_by=USER_ID`
+
+**Returns** an array of tickets according to the applied filters
 ```json
 [
     {
