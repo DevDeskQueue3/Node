@@ -5,6 +5,7 @@ const server = express();
 const verifyJWT = require("./middleware/verifyJWT");
 const authRouter = require("./api/auth/auth-router.js");
 const ticketRouter = require("./api/tickets/tickets-router.js");
+const usersRouter = require("./api/users/users-router.js");
 
 server.use(helmet());
 server.use(cors());
@@ -17,6 +18,7 @@ server.use("/api/auth", authRouter);
 /* AUTHENTICATED ROUTES */
 server.use(verifyJWT);
 server.use("/api/tickets", ticketRouter);
+server.use("/api/users", usersRouter);
 
 server.use(errorHandler);
 

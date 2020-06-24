@@ -261,3 +261,52 @@ ___
     "status": "RESOLVED"
 }
 ```
+___
+
+### Users
+
+| Method | URL            | Description                                                                   |
+| ------ | -------------- | ----------------------------------------------------------------------------- |
+| GET    | /api/users/:id | Returns profile info for user by id                                           |
+| PUT    | /api/users/:id | Updates user and roles for user with id. Users can only update their own data |
+
+___
+
+`GET /api/users/:id`
+
+**Returns**
+```json
+{
+    "id": 7,
+    "name": "Bob",
+    "email": "bob@gmail.com",
+    "roles": [
+        "STUDENT"
+    ]
+}
+```
+___
+
+`PUT /api/users/:id`
+
+**Receives** (fields that do not change can be omitted)
+```json
+{
+    "name": "Bobby",
+    "password": "newpassword42",
+    "roles": ["STUDENT", "HELPER"]
+}
+```
+
+**Returns**
+```json
+{
+    "id": 7,
+    "name": "Bobby",
+    "email": "bob@gmail.com",
+    "roles": [
+        "STUDENT",
+        "HELPER"
+    ]
+}
+```
