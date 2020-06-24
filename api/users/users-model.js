@@ -60,6 +60,7 @@ async function findById(id) {
     .where({ id })
     .select("id", "name", "email")
     .first();
+  if (!user) return;
   user.roles = await db("roles").pluck("role").where({ user_id: id });
   return user;
 }

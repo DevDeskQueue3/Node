@@ -5,7 +5,10 @@ const Users = require("../users/users-model.js");
 router.get("/:id", (req, res, next) => {
   const { id } = req.params;
   Users.findById(id)
-    .then((user) => res.json(user))
+    .then((user) => {
+      if (!user) return next({ code: 404, message: "User not found" });
+      res.json(user);
+    })
     .catch((err) => {
       console.error(err);
       next({ code: 500, message: "There was a problem getting the user" });
