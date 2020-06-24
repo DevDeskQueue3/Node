@@ -26,9 +26,13 @@ async function findOneBy(filter) {
 
 async function add(user) {
   const { name, email, password, role } = user;
-  const [id] = await db("users").insert({ name, email, password }, "id");
-  await db("roles").insert({ user_id: id, role });
-  return findById(id);
+  return db
+    .transaction(async (trx) => {
+      const [id] = await trx("users").insert({ name, email, password }, "id");
+      await trx("roles").insert({ user_id: id, role });
+      return id;
+    })
+    .then((id) => findById(id));
 }
 
 async function findById(id) {
