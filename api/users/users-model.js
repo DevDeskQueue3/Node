@@ -20,9 +20,7 @@ function findBy(filter) {
 async function findOneBy(filter) {
   const user = await db("users").where(filter).first();
   if (!user) return;
-  const roles = await db("roles").where({ user_id: user.id }).select("role");
-  user.roles = roles.map(({ role }) => role);
-
+  user.roles = await db("roles").pluck("role").where({ user_id: user.id });
   return user;
 }
 
@@ -38,9 +36,7 @@ async function findById(id) {
     .where({ id })
     .select("id", "name", "email")
     .first();
-  const roles = await db("roles").where({ user_id: id }).select("role");
-  user.roles = roles.map(({ role }) => role);
-
+  user.roles = await db("roles").pluck("role").where({ user_id: id });
   return user;
 }
 
