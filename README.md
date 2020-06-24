@@ -294,7 +294,6 @@ ___
 {
     "name": "Bobby",
     "password": "newpassword42",
-    "email": "bob@gmail.com",
     "roles": ["STUDENT", "HELPER"]
 }
 ```
