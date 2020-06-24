@@ -7,6 +7,7 @@ module.exports = {
   findOneBy,
   findById,
   getNameByID,
+  update,
 };
 
 function find() {
@@ -30,6 +31,25 @@ async function add(user) {
     .transaction(async (trx) => {
       const [id] = await trx("users").insert({ name, email, password }, "id");
       await trx("roles").insert({ user_id: id, role });
+      return id;
+    })
+    .then((id) => findById(id));
+}
+// Updates user by ID
+function update(userID, changes) {
+  const { name, email, password, roles } = changes;
+  return db
+    .transaction(async (trx) => {
+      const [id] = await trx("users")
+        .where({ id: userID })
+        .update({ name, email, password }, "id");
+      if (!roles) return id;
+      await trx("roles").where({ user_id: id }).del();
+      const rows = roles.map((role) => ({
+        user_id: userID,
+        role,
+      }));
+      await trx.batchInsert("roles", rows);
       return id;
     })
     .then((id) => findById(id));
