@@ -36,7 +36,7 @@ router.put("/:id", (req, res, next) => {
     .then((user) => res.json(user))
     .catch((err) => {
       console.error(err);
-      next({ code: 500, message: "There was a problem getting the user" });
+      next({ code: 500, message: "There was a problem updating the user" });
     });
 });
 

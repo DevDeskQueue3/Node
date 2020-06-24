@@ -40,17 +40,21 @@ function update(userID, changes) {
   const { name, email, password, roles } = changes;
   return db
     .transaction(async (trx) => {
-      const [id] = await trx("users")
-        .where({ id: userID })
-        .update({ name, email, password }, "id");
-      if (!roles) return id;
-      await trx("roles").where({ user_id: id }).del();
-      const rows = roles.map((role) => ({
-        user_id: userID,
-        role,
-      }));
-      await trx.batchInsert("roles", rows);
-      return id;
+      if (name || email || password) {
+        await trx("users")
+          .where({ id: userID })
+          .update({ name, email, password }, "id");
+      }
+      if (roles) {
+        await trx("roles").where({ user_id: userID }).del();
+        const rows = roles.map((role) => ({
+          user_id: userID,
+          role,
+        }));
+        await trx.batchInsert("roles", rows);
+      }
+
+      return userID;
     })
     .then((id) => findById(id));
 }
