@@ -5,14 +5,14 @@ const jwt = require("jsonwebtoken");
 const secrets = require("../../config/secrets.js");
 
 router.post("/register", async (req, res, next) => {
-  const { name, email, password, role } = req.body;
-  if (!(name && email && password && role))
+  const { name, email, password, roles } = req.body;
+  if (!(name && email && password && roles))
     return next({
       code: 400,
       message: "Please provide a name, email, password, and role",
     });
 
-  if (!["ADMIN", "STUDENT", "HELPER"].includes(role))
+  if (!roles.every((role) => ["ADMIN", "STUDENT", "HELPER"].includes(role)))
     return next({
       code: 400,
       message: "Please provide a valid role",
@@ -20,7 +20,7 @@ router.post("/register", async (req, res, next) => {
 
   const hash = bcrypt.hashSync(password, 8);
 
-  Users.add({ name, email, password: hash, role })
+  Users.add({ name, email, password: hash, roles })
     .then((user) => {
       console.log(user);
       const token = generateToken(user);

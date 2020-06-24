@@ -26,11 +26,15 @@ async function findOneBy(filter) {
 }
 
 async function add(user) {
-  const { name, email, password, role } = user;
+  const { name, email, password, roles } = user;
   return db
     .transaction(async (trx) => {
       const [id] = await trx("users").insert({ name, email, password }, "id");
-      await trx("roles").insert({ user_id: id, role });
+      const rows = roles.map((role) => ({
+        user_id: id,
+        role,
+      }));
+      await trx.batchInsert("roles", rows);
       return id;
     })
     .then((id) => findById(id));

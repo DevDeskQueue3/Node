@@ -53,7 +53,7 @@ ___
     "name": "Alice",
     "password": "hello",
     "email": "alice@gmail.com",
-    "role": "STUDENT"
+    "roles": ["STUDENT"]
 }
 ```
 
