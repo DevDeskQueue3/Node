@@ -289,12 +289,12 @@ ___
 
 `PUT /api/users/:id`
 
-**Receives**
+**Receives** (fields that do not change can be omitted)
 ```json
 {
     "name": "Bobby",
     "password": "newpassword42",
-    "email": "bob@gmail.com", // fields that do not change can be omitted
+    "email": "bob@gmail.com",
     "roles": ["STUDENT", "HELPER"]
 }
 ```
