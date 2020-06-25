@@ -7,6 +7,7 @@ module.exports = {
   findOneBy,
   findById,
   getNameByID,
+  update,
 };
 
 function find() {
@@ -20,17 +21,46 @@ function findBy(filter) {
 async function findOneBy(filter) {
   const user = await db("users").where(filter).first();
   if (!user) return;
-  const roles = await db("roles").where({ user_id: user.id }).select("role");
-  user.roles = roles.map(({ role }) => role);
-
+  user.roles = await db("roles").pluck("role").where({ user_id: user.id });
   return user;
 }
 
 async function add(user) {
-  const { name, email, password, role } = user;
-  const [id] = await db("users").insert({ name, email, password }, "id");
-  await db("roles").insert({ user_id: id, role });
-  return findById(id);
+  const { name, email, password, roles } = user;
+  return db
+    .transaction(async (trx) => {
+      const [id] = await trx("users").insert({ name, email, password }, "id");
+      const rows = roles.map((role) => ({
+        user_id: id,
+        role,
+      }));
+      await trx.batchInsert("roles", rows);
+      return id;
+    })
+    .then((id) => findById(id));
+}
+// Updates user by ID
+function update(userID, changes) {
+  const { name, email, password, roles } = changes;
+  return db
+    .transaction(async (trx) => {
+      if (name || email || password) {
+        await trx("users")
+          .where({ id: userID })
+          .update({ name, email, password }, "id");
+      }
+      if (roles) {
+        await trx("roles").where({ user_id: userID }).del();
+        const rows = roles.map((role) => ({
+          user_id: userID,
+          role,
+        }));
+        await trx.batchInsert("roles", rows);
+      }
+
+      return userID;
+    })
+    .then((id) => findById(id));
 }
 
 async function findById(id) {
@@ -38,9 +68,8 @@ async function findById(id) {
     .where({ id })
     .select("id", "name", "email")
     .first();
-  const roles = await db("roles").where({ user_id: id }).select("role");
-  user.roles = roles.map(({ role }) => role);
-
+  if (!user) return;
+  user.roles = await db("roles").pluck("role").where({ user_id: id });
   return user;
 }
 

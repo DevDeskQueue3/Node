@@ -8,6 +8,10 @@ exports.seed = function (knex) {
           role: "STUDENT",
         },
         {
+          user_id: 1,
+          role: "HELPER",
+        },
+        {
           user_id: 2,
           role: "STUDENT",
         },
