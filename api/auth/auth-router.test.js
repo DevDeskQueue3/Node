@@ -11,12 +11,6 @@ beforeAll(() =>
   })
 );
 
-describe("setup test", () => {
-  it("runs", () => {
-    expect(true).toBe(true);
-  });
-});
-
 describe("POST /api/auth/register", () => {
   it("returns 201 and creates a new user in the database", () => {
     return request(server)
