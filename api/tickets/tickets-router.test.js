@@ -11,23 +11,21 @@ beforeAll(async () => {
     .expect(200);
 
   token = credentials.body.token;
-  console.log(token);
 });
 
 describe("GET /tickets", function () {
-  it("it should require authorization", async () => {
+  it("it should return error 401 if user is not authorized", async () => {
     const tickets = await request(server).get("/api/tickets");
     expect(tickets.status).toBe(401);
   });
 
-  it("it should require authorization", async () => {
+  it("it should return 200 if user is authorized", async () => {
     const credentials = await request(server)
       .post("/api/auth/login")
       .send({ email: "testuser1@mail.com", password: "12345" })
       .expect(200);
 
     token = credentials.body.token;
-    // console.log(token);
 
     const tickets = await request(server)
       .get("/api/tickets")
@@ -37,20 +35,90 @@ describe("GET /tickets", function () {
   });
 });
 
-describe("addddddd", () => {
-  it("whwhwhwhhwhw", () => {
+describe("POST /tickets", () => {
+  it("it should return error 401 if user in not authorized to add tickets to database", () => {
+    return request(server)
+      .post("/api/tickets")
+      .send({
+        title: "Ticket title",
+        description: "Ticket description",
+        what_ive_tried: "",
+      })
+      .then((res) => {
+        expect(res.status).toBe(401);
+      });
+  });
+
+  it("it should return error 400 if value of title, description or what_ive_tried is missing", () => {
     return request(server)
       .post("/api/tickets")
       .set("Authorization", "Bearer " + token)
       .send({
-        title: "test",
-        description: "testing",
-        what_ive_tried: "testing",
+        title: "",
+        description: "Ticket description",
+        what_ive_tried: "Ticket actions",
       })
       .then((res) => {
-        console.log(res.body);
-        expect(res.type).toBe("application/json");
+        expect(res.status).toBe(400);
+      });
+  });
+
+  it("it should return 201 and create new ticket in database", () => {
+    return request(server)
+      .post("/api/tickets")
+      .set("Authorization", "Bearer " + token)
+      .send({
+        title: "Ticket title",
+        description: "Ticket description",
+        what_ive_tried: "Ticket actions",
+      })
+      .then((res) => {
         expect(res.status).toBe(201);
+      });
+  });
+});
+
+describe("PUT /tickets/:id", function () {
+  it("it should return 201 and update ticket of id 5 in database", () => {
+    return request(server)
+      .put("/api/tickets/1")
+      .set("Authorization", "Bearer " + token)
+      .send({
+        title: "New title",
+        description: "New ticket description",
+        what_ive_tried: "New actions",
+      })
+      .then((res) => {
+        expect(res.status).toBe(201);
+      });
+  });
+
+  it("it should return 400 if value of ticket title or description is missing", () => {
+    return request(server)
+      .put("/api/tickets/1")
+      .set("Authorization", "Bearer " + token)
+      .send({
+        title: "",
+        description: "New ticket description",
+        what_ive_tried: "New actions",
+      })
+      .then((res) => {
+        expect(res.status).toBe(400);
+      });
+  });
+
+  it("it should return 500 if ticket is not updated", () => {
+    console.log("TOKEN", token);
+    return request(server)
+      .put("/api/tickets/6")
+      .set("Authorization", "Bearer " + token)
+      .send({
+        title: "New ticket title",
+        description: "New ticket description",
+        what_ive_tried: "New actions",
+      })
+      .then((res) => {
+        expect(res.status).toBe(500);
       });
   });
 });
