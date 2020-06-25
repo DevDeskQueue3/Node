@@ -60,13 +60,9 @@ jobs:
           PG_PASSWORD: devdesk-test
 
       # A GitHub action for running tests and publishing coverage
-      - uses: paambaati/codeclimate-action@v2.4.0
+      - run: npm run coverage
         env:
           # Environment variables. Secrets are set in GitHub repo Settings > Secrets
           PG_USERNAME: devdesk-test
           PG_PASSWORD: devdesk-test
           NODE_ENV: testing
-
-        with:
-          # Run our `coverage` command from our `package.json`
-          coverageCommand: npm run coverage
