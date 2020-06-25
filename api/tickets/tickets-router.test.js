@@ -3,6 +3,8 @@ const server = require("../../server.js");
 const db = require("../../dbConfig");
 
 let token;
+let userId;
+
 beforeAll(async () => {
   await db.seed.run();
   const credentials = await request(server)
@@ -11,6 +13,7 @@ beforeAll(async () => {
     .expect(200);
 
   token = credentials.body.token;
+  userId = credentials.body.id;
 });
 
 describe("GET /tickets", function () {
@@ -106,19 +109,32 @@ describe("PUT /tickets/:id", function () {
         expect(res.status).toBe(400);
       });
   });
+});
 
-  it("it should return 500 if ticket is not updated", () => {
-    console.log("TOKEN", token);
+describe("DELETE /tickets/:id", function () {
+  it("it should return 200 and delete ticket from database", () => {
     return request(server)
-      .put("/api/tickets/6")
+      .delete("/api/tickets/1")
       .set("Authorization", "Bearer " + token)
       .send({
-        title: "New ticket title",
-        description: "New ticket description",
-        what_ive_tried: "New actions",
+        userId,
+        ticketID: 1,
       })
       .then((res) => {
-        expect(res.status).toBe(500);
+        expect(res.status).toBe(200);
+      });
+  });
+
+  it("it should return 404 if ticket does not exist", () => {
+    return request(server)
+      .delete("/api/tickets/10")
+      .set("Authorization", "Bearer " + token)
+      .send({
+        userId,
+        ticketID: 10,
+      })
+      .then((res) => {
+        expect(res.status).toBe(404);
       });
   });
 });
