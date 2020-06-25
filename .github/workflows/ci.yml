@@ -1,0 +1,68 @@
+# The name of the workflow
+name: build
+
+# What conditions trigger the workflow
+# Trigger the workflow on push or pull request,
+# but only for the master branch
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+# The jobs that will be run, usually in parallel
+jobs:
+  # A job to generate and publish code coverage
+  coverage:
+    # A more descriptive name of the job
+    name: Test coverage
+
+    # The OS on which the job will run
+    runs-on: ubuntu-latest
+
+    # Service containers to run with `coverage`
+    services:
+      # Label used to access the service container
+      postgres:
+        # Docker Hub image
+        image: postgres
+        # Provide username, password, and default DB for Postgres
+        env:
+          POSTGRES_DB: devdesk-test
+          POSTGRES_USER: devdesk-test
+          POSTGRES_PASSWORD: devdesk-test
+        # Set health checks to wait until postgres has started
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          # Maps tcp port 5432 on service container to the host
+          - 5432:5432
+
+    # The steps for the job, executed in sequence
+    steps:
+      # A GitHub action for checking out the current branch
+      - uses: actions/checkout@master
+
+      # A GitHub action to setup Node.js
+      - uses: actions/setup-node@master
+        with:
+          node-version: "12"
+
+      # Run the NPM ci command to install node_modules and run testing migrations on DB
+      - run: npm ci && npm run migrate:testing
+        env:
+          PG_USERNAME: devdesk-test
+          PG_PASSWORD: devdesk-test
+
+      # A GitHub action for running tests and publishing coverage
+      - run: npm run coverage
+        env:
+          # Environment variables. Secrets are set in GitHub repo Settings > Secrets
+          PG_USERNAME: devdesk-test
+          PG_PASSWORD: devdesk-test
+          NODE_ENV: testing
